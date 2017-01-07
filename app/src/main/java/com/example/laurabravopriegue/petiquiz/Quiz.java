@@ -8,6 +8,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.content.SharedPreferences;
+
+import org.w3c.dom.Text;
+
 public class Quiz extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
@@ -18,6 +22,8 @@ public class Quiz extends AppCompatActivity {
 
     private Button mNextButton;
     private TextView mQuestionTextView;
+    private TextView userText;
+    private TextView userScore;
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_oceans, true),
@@ -41,12 +47,27 @@ public class Quiz extends AppCompatActivity {
 
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast;
+
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            boolean loggedIn = pref.getBoolean("loggedIn", false);
+            if (loggedIn) {
+                SharedPreferences.Editor editor = pref.edit();
+                Integer score = pref.getInt("score", 0);
+                score += 10;
+                editor.putInt("score", score); // Storing integer
+
+                editor.commit(); // commit changes
+
+                //update score on screen
+                userScore.setText(score.toString());
+            }
         } else {
             messageResId = R.string.incorrect_toast;
         }
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
                 .show();
+
     }
 
     @Override
@@ -56,7 +77,17 @@ public class Quiz extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
+        userText = (TextView) findViewById(R.id.userText);
+        userScore = (TextView) findViewById(R.id.userScore);
 
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        boolean loggedIn = pref.getBoolean("loggedIn", false);
+        if (loggedIn) {
+            String userName = pref.getString("user", "");
+            Integer score = pref.getInt("score", 0);
+            userText.setText(userName);
+            userScore.setText(score.toString());
+        }
 
         mTrueButton = (Button) findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {

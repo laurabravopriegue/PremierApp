@@ -16,6 +16,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.SharedPreferences;
+
 public class Login extends AppCompatActivity {
 
     @Override
@@ -63,8 +65,20 @@ public class Login extends AppCompatActivity {
                                 intent.putExtra("username", username);
                                 intent.putExtra("age", age);
 
-                                Login.this.startActivity(intent);
+                                // Begin:
+                                // Save logged in user to use in other activites
+                                SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                                SharedPreferences.Editor editor = pref.edit();
 
+                                editor.putBoolean("loggedIn", true); // Storing boolean - true/false
+                                editor.putString("user", username); // Storing string
+                                editor.putInt("score", 0); // Storing integer
+
+                                editor.commit(); // commit changes
+                                // End
+
+
+                                Login.this.startActivity(intent);
                             }
                             else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);

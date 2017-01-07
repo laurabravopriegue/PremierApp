@@ -16,7 +16,7 @@ public class SplashPage extends Activity {
         Thread timerThread = new Thread(){
             public void run(){
                 try{
-                    sleep(10000);
+                    sleep(3000);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{

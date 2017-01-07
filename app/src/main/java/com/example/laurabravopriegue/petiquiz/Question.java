@@ -6,15 +6,15 @@ package com.example.laurabravopriegue.petiquiz;
 
 public class Question {
 
-    private int mTextResId;
+    private String mQuestion;
     private boolean mAnswerTrue;
 
-    public int getTextResId() {
-        return mTextResId;
+    public String getTextResId() {
+        return mQuestion;
     }
 
-    public void setTextResId(int textResId) {
-        mTextResId = textResId;
+    public void setTextResId(String question) {
+        mQuestion = question;
     }
 
     public boolean isAnswerTrue() {
@@ -25,8 +25,8 @@ public class Question {
         mAnswerTrue = answerTrue;
     }
 
-    public Question(int textResId, boolean answerTrue) {
-        mTextResId = textResId;
+    public Question(String question, boolean answerTrue) {
+        mQuestion = question;
         mAnswerTrue = answerTrue;
 
 

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import android.content.SharedPreferences;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
@@ -35,17 +36,13 @@ public class Quiz extends AppCompatActivity {
     private TextView userScore;
 
     private Question[] mQuestionBank = new Question[] {
-            new Question(R.string.question_oceans, true),
-            new Question(R.string.question_mideast, false),
-            new Question(R.string.question_africa, false),
-            new Question(R.string.question_americas, true),
-            new Question(R.string.question_asia, true),
-    };
+                new Question("waiting for questions to load", true)
+    };;
 
     private int mCurrentIndex = 0;
 
     private void updateQuestion() {
-        int question = mQuestionBank[mCurrentIndex].getTextResId();
+        String question = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(question);
     }
 
@@ -144,9 +141,23 @@ public class Quiz extends AppCompatActivity {
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
     }
 
-    public void QuestionsLoaded() {
-        Toast.makeText(this, "loaded", Toast.LENGTH_SHORT)
-                .show();
+    public void QuestionsLoaded(JSONArray response) throws JSONException {
+        int len = response.length();
+        Question[] questionsBank = new Question[len];
+        for (int i = 0; i < len; i++) {
+            JSONObject question = response.getJSONObject(i);
+            Boolean answer;
+            if (question.getInt("answer") == 0) {
+                answer = false;
+            }
+            else {
+                answer = true;
+            }
+            String questionText = question.getString("question");
+            questionsBank[i] = new Question(questionText, answer);
+        }
+        mQuestionBank = questionsBank;
+        updateQuestion();
     }
 
     public class DownloadQuestions extends AsyncTask<Void, Void, JSONArray>
@@ -154,7 +165,6 @@ public class Quiz extends AppCompatActivity {
         @Override
         public JSONArray doInBackground(Void... params)
         {
-
             String str="https://petiapp.000webhostapp.com/GetQuestions.php";
             URLConnection urlConn = null;
             BufferedReader bufferedReader = null;
@@ -196,7 +206,11 @@ public class Quiz extends AppCompatActivity {
         {
             if(response != null)
             {
-                QuestionsLoaded();
+                try {
+                    QuestionsLoaded(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

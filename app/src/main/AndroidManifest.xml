@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".menu">
         </activity>
-        <activity android:name=".Quiz">
+        <activity android:name=".Quiz"
+            android:configChanges="orientation|screenSize">
         </activity>
         <activity android:name=".seequestions">
         </activity>
@@ -30,5 +31,4 @@
         <activity android:name=".UserArea">
         </activity>
     </application>
-
 </manifest>

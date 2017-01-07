@@ -51,8 +51,8 @@ public class Register extends AppCompatActivity {
                                 Register.this.startActivity(intent);
                             }else{
                                 AlertDialog.Builder builder = new AlertDialog.Builder(Register.this);
-                                builder.setMessage("Register Failed");
-                                builder.setNegativeButton("Retry", null);
+                                builder.setMessage("Username already taken");
+                                builder.setNegativeButton("Change it", null);
                                 builder.create();
                                 builder.show();
                             }

@@ -1,5 +1,6 @@
 package com.example.laurabravopriegue.petiquiz;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +11,15 @@ import android.widget.Toast;
 
 import android.content.SharedPreferences;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class Quiz extends AppCompatActivity {
 
@@ -124,6 +133,8 @@ public class Quiz extends AppCompatActivity {
 
         updateQuestion();
 
+        DownloadQuestions downloadQuestions = new DownloadQuestions();
+        downloadQuestions.execute();
     }
 
     @Override
@@ -131,6 +142,63 @@ public class Quiz extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+
+    public void QuestionsLoaded() {
+        Toast.makeText(this, "loaded", Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    public class DownloadQuestions extends AsyncTask<Void, Void, JSONArray>
+    {
+        @Override
+        public JSONArray doInBackground(Void... params)
+        {
+
+            String str="https://petiapp.000webhostapp.com/GetQuestions.php";
+            URLConnection urlConn = null;
+            BufferedReader bufferedReader = null;
+            try
+            {
+                URL url = new URL(str);
+                urlConn = url.openConnection();
+                bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+
+                StringBuffer stringBuffer = new StringBuffer();
+                String line;
+                while ((line = bufferedReader.readLine()) != null)
+                {
+                    stringBuffer.append(line);
+                }
+
+                return new JSONArray(stringBuffer.toString());
+            }
+            catch(Exception ex)
+            {
+                Log.e("App", "yourDataTask", ex);
+                return null;
+            }
+            finally
+            {
+                if(bufferedReader != null)
+                {
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onPostExecute(JSONArray response)
+        {
+            if(response != null)
+            {
+                QuestionsLoaded();
+            }
+        }
     }
 
 }

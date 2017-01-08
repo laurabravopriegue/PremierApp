@@ -30,19 +30,32 @@ import java.util.Arrays;
 public class seequestions extends ListFragment {
     FragmentActivity faActivity;
     RelativeLayout llLayout;
-    private Question[] mQuestionBank = new Question[] {
-            new Question("waiting for questions to load", true, null)
-    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         faActivity = super.getActivity();
         llLayout = (RelativeLayout) inflater.inflate(R.layout.activity_seequestions, container, false);
 
-        seequestions.DownloadQuestions downloadQuestions = new seequestions.DownloadQuestions();
-        downloadQuestions.execute();
+        if (!Questions.questionsLoaded) {
+            seequestions.DownloadQuestions downloadQuestions = new seequestions.DownloadQuestions();
+            downloadQuestions.execute();
+        }
 
         llLayout.findViewById(R.id.linLayout_quiz);
         return llLayout;
+    }
+
+
+    @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+        if (Questions.questionsLoaded) {
+            // Construct the data source
+            ArrayList<Question> arrayOfQuestions = new ArrayList<Question>(Arrays.asList(Questions.mQuestionBank));
+            // Create the adapter to convert the array to views
+            QuestionAdapter adapter = new QuestionAdapter(faActivity, arrayOfQuestions);
+            // Attach the adapter to a ListView
+            getListView().setAdapter(adapter);
+        }
     }
 
     public void QuestionsLoaded(JSONArray response) throws JSONException {
@@ -69,12 +82,13 @@ public class seequestions extends ListFragment {
             String questionText = question.getString("question");
             questionsBank[i] = new Question(questionText, answer, userAnswer);
         }
-        mQuestionBank = questionsBank;
+        Questions.mQuestionBank = questionsBank;
+        Questions.questionsLoaded = true;
         // Construct the data source
-        ArrayList<Question> arrayOfQuestions = new ArrayList<Question>(Arrays.asList(questionsBank));
-// Create the adapter to convert the array to views
+        ArrayList<Question> arrayOfQuestions = new ArrayList<Question>(Arrays.asList(Questions.mQuestionBank));
+        // Create the adapter to convert the array to views
         QuestionAdapter adapter = new QuestionAdapter(faActivity, arrayOfQuestions);
-// Attach the adapter to a ListView
+        // Attach the adapter to a ListView
         getListView().setAdapter(adapter);
     }
 

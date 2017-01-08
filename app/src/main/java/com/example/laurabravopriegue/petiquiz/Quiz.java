@@ -43,14 +43,10 @@ public class Quiz extends Fragment {
     private TextView userText;
     private TextView userScore;
 
-    private Question[] mQuestionBank = new Question[] {
-                new Question("waiting for questions to load", true, null)
-    };
-
     private int mCurrentIndex = 0;
 
     private void updateQuestion() {
-        Question currentQuestion = mQuestionBank[mCurrentIndex];
+        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
         String question = currentQuestion.getTextResId();
         mQuestionTextView.setText(question);
 
@@ -69,7 +65,7 @@ public class Quiz extends Fragment {
     }
 
     private void checkAnswer(boolean userPressed) {
-        Question currentQuestion = mQuestionBank[mCurrentIndex];
+        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
         if (currentQuestion.mUserAnswer != null) {
             Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
                     .show();
@@ -148,7 +144,7 @@ public class Quiz extends Fragment {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                mCurrentIndex = (mCurrentIndex + 1) % Questions.mQuestionBank.length;
                 updateQuestion();
             }
         });
@@ -160,17 +156,16 @@ public class Quiz extends Fragment {
 
         //updateQuestion();
 
-        DownloadQuestions downloadQuestions = new DownloadQuestions();
-        downloadQuestions.execute();
+        if (!Questions.questionsLoaded) {
+            DownloadQuestions downloadQuestions = new DownloadQuestions();
+            downloadQuestions.execute();
+        }
+        else {
+            updateQuestion();
+        }
 
-        // Don't use this method, it's handled by inflater.inflate() above :
-        // setContentView(R.layout.activity_layout);
-
-        // The FragmentActivity doesn't contain the layout directly so we must use our instance of     LinearLayout :
         llLayout.findViewById(R.id.linLayout_quiz);
-        // Instead of :
-        // findViewById(R.id.someGuiElement);
-        return llLayout; // We must return the loaded Layout
+        return llLayout;
     }
 
     @Override
@@ -204,7 +199,9 @@ public class Quiz extends Fragment {
             String questionText = question.getString("question");
             questionsBank[i] = new Question(questionText, answer, userAnswer);
         }
-        mQuestionBank = questionsBank;
+        //mQuestionBank = questionsBank;
+        Questions.mQuestionBank = questionsBank;
+        Questions.questionsLoaded = true;
         updateQuestion();
     }
 

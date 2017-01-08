@@ -91,7 +91,7 @@ public class Login extends Fragment {
 
                                     String name = jsonResponse.getString("name");
                                     int age = jsonResponse.getInt("age");
-
+                                    int userId = jsonResponse.getInt("userID");
                                     // Begin:
                                     // Save logged in user to use in other activites
                                     SharedPreferences pref = faActivity.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -102,6 +102,7 @@ public class Login extends Fragment {
                                     editor.putInt("score", 0); // Storing integer
                                     editor.putString("name", name);
                                     editor.putInt("age", age);
+                                    editor.putInt("userId", userId);
 
                                     editor.commit(); // commit changes
                                     // End

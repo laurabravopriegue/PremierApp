@@ -204,7 +204,7 @@ public class Quiz extends Fragment {
         @Override
         public JSONArray doInBackground(Void... params)
         {
-            String str="https://petiapp.000webhostapp.com/GetQuestions.php";
+            String str="http://mfcfund.ml/petiapp/GetQuestions.php";
             URLConnection urlConn = null;
             BufferedReader bufferedReader = null;
             try

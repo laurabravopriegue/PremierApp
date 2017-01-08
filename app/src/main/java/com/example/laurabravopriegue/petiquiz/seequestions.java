@@ -57,7 +57,7 @@ public class seequestions extends ListFragment {
                 answer = true;
             }
             String questionText = question.getString("question");
-            questionsBank[i] = new Question(questionText, answer, null);
+            questionsBank[i] = new Question(questionText, answer, true);
         }
         mQuestionBank = questionsBank;
         // Construct the data source
@@ -73,7 +73,7 @@ public class seequestions extends ListFragment {
         @Override
         public JSONArray doInBackground(Void... params)
         {
-            String str="https://petiapp.000webhostapp.com/GetQuestions.php";
+            String str="http://mfcfund.ml/petiapp/GetQuestions.php";
             URLConnection urlConn = null;
             BufferedReader bufferedReader = null;
             try

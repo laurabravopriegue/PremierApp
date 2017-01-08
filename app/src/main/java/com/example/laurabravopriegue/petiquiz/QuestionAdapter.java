@@ -2,6 +2,7 @@ package com.example.laurabravopriegue.petiquiz;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -36,17 +37,20 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle=new Bundle();
-                    bundle.putString("message", "From Activity");
-
-                    Quiz newFragment = new Quiz();
-                    Bundle args = new Bundle();
-                    args.putInt("question", positionFinal);
-                    newFragment.setArguments(args);
-                    FragmentTransaction transaction = ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, newFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                    if (question.mUserAnswer != null) {
+                        Toast.makeText(context, "You already answered with "+question.mUserAnswer + " to this question", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                    else {
+                        Quiz newFragment = new Quiz();
+                        Bundle args = new Bundle();
+                        args.putInt("question", positionFinal);
+                        newFragment.setArguments(args);
+                        FragmentTransaction transaction = ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, newFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
                 }
             });
         }
@@ -54,6 +58,11 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
         TextView text = (TextView) convertView.findViewById(R.id.txtQuestion);
         // Populate the data into the template view using the data object
         text.setText(question.getTextResId());
+        text.setTextSize(20);
+        if (question.mUserAnswer != null) {
+            convertView.setBackgroundColor(Color.GRAY);
+        }
+
         // Return the completed view to render on screen
         return convertView;
     }

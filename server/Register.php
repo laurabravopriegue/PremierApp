@@ -1,6 +1,6 @@
 <?php
     $con = mysqli_connect("localhost", "id451584_quizapp", "submeseta", "id451584_premier");
-    
+    mysqli_set_charset($con, 'utf8');
     $name = $_POST["name"];
     $age = $_POST["age"];
     $username = $_POST["username"];

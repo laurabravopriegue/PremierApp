@@ -92,6 +92,7 @@ public class Login extends Fragment {
                                     String name = jsonResponse.getString("name");
                                     int age = jsonResponse.getInt("age");
                                     int userId = jsonResponse.getInt("userID");
+                                    int maxScore = jsonResponse.getInt("maxscore");
                                     // Begin:
                                     // Save logged in user to use in other activites
                                     SharedPreferences pref = faActivity.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -103,6 +104,7 @@ public class Login extends Fragment {
                                     editor.putString("name", name);
                                     editor.putInt("age", age);
                                     editor.putInt("userId", userId);
+                                    editor.putInt("maxscore", maxScore);
 
                                     editor.commit(); // commit changes
                                     // End

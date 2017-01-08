@@ -98,7 +98,12 @@ public class menu extends Fragment {
 
             editor.putBoolean("loggedIn", false);
             editor.putString("user", "");
+            editor.putString("username", "");
             editor.putInt("score", 0);
+            editor.putString("name", "");
+            editor.putInt("age", 0);
+            editor.putInt("userId", 0);
+            editor.putInt("maxscore", 0);
 
             editor.commit();
             // Reload questions

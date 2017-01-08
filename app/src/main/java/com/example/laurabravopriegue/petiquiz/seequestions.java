@@ -50,7 +50,7 @@ public class seequestions extends ListFragment {
     public void onViewCreated (View view, Bundle savedInstanceState) {
         if (Questions.questionsLoaded) {
             // Construct the data source
-            ArrayList<Question> arrayOfQuestions = new ArrayList<Question>(Arrays.asList(Questions.mQuestionBank));
+            ArrayList<Question> arrayOfQuestions = Questions.mQuestionBank;
             // Create the adapter to convert the array to views
             QuestionAdapter adapter = new QuestionAdapter(faActivity, arrayOfQuestions);
             // Attach the adapter to a ListView
@@ -60,7 +60,7 @@ public class seequestions extends ListFragment {
 
     public void QuestionsLoaded(JSONArray response) throws JSONException {
         int len = response.length();
-        Question[] questionsBank = new Question[len];
+        ArrayList<Question> questionsBank = new ArrayList<Question>();
         for (int i = 0; i < len; i++) {
             JSONObject question = response.getJSONObject(i);
             Boolean answer;
@@ -76,12 +76,12 @@ public class seequestions extends ListFragment {
             }
             String questionText = question.getString("question");
             String explanationText = question.getString("explanation");
-            questionsBank[i] = new Question(questionText, answer, userAnswer, explanationText);
+            questionsBank.add(i, new Question(questionText, answer, userAnswer, explanationText));
         }
         Questions.mQuestionBank = questionsBank;
         Questions.questionsLoaded = true;
         // Construct the data source
-        ArrayList<Question> arrayOfQuestions = new ArrayList<Question>(Arrays.asList(Questions.mQuestionBank));
+        ArrayList<Question> arrayOfQuestions = Questions.mQuestionBank;
         // Create the adapter to convert the array to views
         QuestionAdapter adapter = new QuestionAdapter(faActivity, arrayOfQuestions);
         // Attach the adapter to a ListView

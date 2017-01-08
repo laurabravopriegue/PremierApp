@@ -1,8 +1,11 @@
 package com.example.laurabravopriegue.petiquiz;
 
+import android.icu.text.AlphabeticIndex;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +20,10 @@ import android.widget.Toast;
 
 import android.content.SharedPreferences;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 public class Quiz extends Fragment {
     FragmentActivity faActivity;
@@ -48,7 +56,7 @@ public class Quiz extends Fragment {
     private int mCurrentIndex = 0;
 
     private void updateQuestion() {
-        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
+        Question currentQuestion = Questions.mQuestionBank.get(mCurrentIndex);
         String question = currentQuestion.getTextResId();
         mQuestionTextView.setText(question);
 
@@ -74,7 +82,7 @@ public class Quiz extends Fragment {
     }
 
     private void checkAnswer(boolean userPressed) {
-        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
+        Question currentQuestion = Questions.mQuestionBank.get(mCurrentIndex);
         if (currentQuestion.mUserAnswer != null) {
             Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
                     .show();
@@ -110,10 +118,13 @@ public class Quiz extends Fragment {
 
         Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
+        if (Questions.AllQuestionsAnswered()) {
+            RecordScore();
+        }
     }
 
     private void skipAnswer() {
-        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
+        Question currentQuestion = Questions.mQuestionBank.get(mCurrentIndex);
         if (currentQuestion.mUserAnswer != null) {
             Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
                     .show();
@@ -122,10 +133,13 @@ public class Quiz extends Fragment {
         currentQuestion.mUserAnswer = 2;
         Toast.makeText(super.getActivity(), "Skipping question", Toast.LENGTH_SHORT)
                 .show();
+        if (Questions.AllQuestionsAnswered()) {
+            RecordScore();
+        }
     }
 
     private void cheatAnswer() {
-        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
+        Question currentQuestion = Questions.mQuestionBank.get(mCurrentIndex);
         if (currentQuestion.mUserAnswer != null) {
             Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
                     .show();
@@ -134,6 +148,42 @@ public class Quiz extends Fragment {
         currentQuestion.mUserAnswer = 3;
         Toast.makeText(super.getActivity(), currentQuestion.isAnswerTrue()+": "+currentQuestion.getExplanation(), Toast.LENGTH_SHORT)
                 .show();
+
+        if (Questions.AllQuestionsAnswered()) {
+            RecordScore();
+        }
+    }
+
+    private void RecordScore() {
+        SharedPreferences pref = faActivity.getSharedPreferences("MyPref", 0); // 0 - for private mode
+        int maxScore = pref.getInt("maxscore", 0);
+        int score = pref.getInt("score", 0);
+        int userid = pref.getInt("userId", 0);
+        if (score > maxScore) {
+            Toast.makeText(super.getActivity(), "You have a new high score of "+score+" points! Sending it to the server...", Toast.LENGTH_SHORT)
+                    .show();
+
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean success = jsonResponse.getBoolean("success");
+
+                        if (success) {
+
+                        } else {
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            ScoreRequest scoreRequest = new ScoreRequest(userid, score, responseListener);
+            RequestQueue queue = Volley.newRequestQueue(faActivity);
+            queue.add(scoreRequest);
+        }
     }
 
     @Override
@@ -195,7 +245,7 @@ public class Quiz extends Fragment {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + 1) % Questions.mQuestionBank.length;
+                mCurrentIndex = (mCurrentIndex + 1) % Questions.mQuestionBank.size();
                 updateQuestion();
             }
         });
@@ -226,7 +276,7 @@ public class Quiz extends Fragment {
 
     public void QuestionsLoaded(JSONArray response) throws JSONException {
         int len = response.length();
-        Question[] questionsBank = new Question[len];
+        ArrayList<Question> questionsBank = new ArrayList<Question>();
         for (int i = 0; i < len; i++) {
             JSONObject question = response.getJSONObject(i);
             Boolean answer;
@@ -242,7 +292,7 @@ public class Quiz extends Fragment {
             }
             String questionText = question.getString("question");
             String explanationText = question.getString("explanation");
-            questionsBank[i] = new Question(questionText, answer, userAnswer, explanationText);
+            questionsBank.add(i, new Question(questionText, answer, userAnswer, explanationText));
         }
         //mQuestionBank = questionsBank;
         Questions.mQuestionBank = questionsBank;

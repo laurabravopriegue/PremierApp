@@ -9,7 +9,7 @@
     mysqli_stmt_execute($statement);
     
     mysqli_stmt_store_result($statement);
-    mysqli_stmt_bind_result($statement, $user_id, $name, $username, $age, $password);
+    mysqli_stmt_bind_result($statement, $user_id, $name, $username, $age, $password, $maxscore);
     
     $response = array();
     $response["success"] = false;  
@@ -21,6 +21,7 @@
         $response["username"] = $username;
         $response["password"] = $password;
         $response["userID"] = $user_id;
+        $response["maxscore"] = $maxscore;
     }
     
     echo json_encode($response);

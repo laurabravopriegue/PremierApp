@@ -13,18 +13,29 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 
 public class Questions {
-    public static Question[] mQuestionBank;
+    public static ArrayList<Question> mQuestionBank;
     public static Boolean questionsLoaded = false;
 
-    public static Question[] getQuestions() {
+    public static ArrayList<Question> getQuestions() {
         if (questionsLoaded) {
             return mQuestionBank;
         }
         else {
             return null;
         }
+    }
+
+    public static Boolean AllQuestionsAnswered() {
+        int len = mQuestionBank.size();
+        for (int i = 0; i < len; i++) {
+            if (mQuestionBank.get(i).mUserAnswer == null) {
+                return false;
+            }
+        }
+        return true;
     }
 }

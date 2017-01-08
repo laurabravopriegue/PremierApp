@@ -53,17 +53,30 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
                     }
                 }
             });
+            if (question.mUserAnswer != null) {
+                convertView.setBackgroundColor(Color.GRAY);
+            }
         }
         // Lookup view for data population
         TextView text = (TextView) convertView.findViewById(R.id.txtQuestion);
         // Populate the data into the template view using the data object
         text.setText(question.getTextResId());
         text.setTextSize(20);
-        if (question.mUserAnswer != null) {
-            convertView.setBackgroundColor(Color.GRAY);
-        }
 
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    @Override
+
+    public int getViewTypeCount() {
+
+        return getCount();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        return position;
     }
 }

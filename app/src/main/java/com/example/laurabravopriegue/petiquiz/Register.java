@@ -48,55 +48,77 @@ public class Register extends Fragment {
                 final String name = etName.getText().toString();
                 final String username = etUserName.getText().toString();
                 final String password = etPassword.getText().toString();
-                final int age = Integer.parseInt(etAge.getText().toString());
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+                if (name.matches(""))
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                    builder.setMessage("Please provide a name!");
+                    builder.setNegativeButton("OK", null);
+                    builder.create();
+                    builder.show();
+                }
+                else if (username.matches(""))
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                    builder.setMessage("Please provide a username!");
+                    builder.setNegativeButton("OK", null);
+                    builder.create();
+                    builder.show();
+                }
+                else if (password.matches(""))
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                    builder.setMessage("Please provide a password!");
+                    builder.setNegativeButton("OK", null);
+                    builder.create();
+                    builder.show();
+                }
+                else if (etAge.getText().toString().matches(""))
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                    builder.setMessage("Please provide your age!");
+                    builder.setNegativeButton("OK", null);
+                    builder.create();
+                    builder.show();
+                }
+                else
+                {
+                    final int age = Integer.parseInt(etAge.getText().toString());
+                    Response.Listener<String> responseListener = new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+                                boolean success = jsonResponse.getBoolean("success");
 
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-                            boolean success = jsonResponse.getBoolean("success");
-
-                            if (success) {
-                                Login newFragment = new Login();
-                                Bundle args = new Bundle();
-                                newFragment.setArguments(args);
-                                FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
-                                transaction.replace(R.id.fragment_container, newFragment);
-                                transaction.addToBackStack(null);
-                                transaction.commit();
-                            }else{
-                                AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
-                                builder.setMessage("Username already taken");
-                                builder.setNegativeButton("Change it", null);
-                                builder.create();
-                                builder.show();
+                                if (success) {
+                                    Login newFragment = new Login();
+                                    Bundle args = new Bundle();
+                                    newFragment.setArguments(args);
+                                    FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.fragment_container, newFragment);
+                                    transaction.addToBackStack(null);
+                                    transaction.commit();
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                                    builder.setMessage("Username already taken");
+                                    builder.setNegativeButton("Change it", null);
+                                    builder.create();
+                                    builder.show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-
-
-                    }
-                };
-
-                RegisterRequest registerRequest = new RegisterRequest(name, username, age, password, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(faActivity);
-                queue.add(registerRequest);
+                    };
+                    RegisterRequest registerRequest = new RegisterRequest(name, username, age, password, responseListener);
+                    RequestQueue queue = Volley.newRequestQueue(faActivity);
+                    queue.add(registerRequest);
+                }
             }
-
         });
-
-        // Don't use this method, it's handled by inflater.inflate() above :
-        // setContentView(R.layout.activity_layout);
-
-        // The FragmentActivity doesn't contain the layout directly so we must use our instance of     LinearLayout :
         rLayout.findViewById(R.id.activity_register);
-        // Instead of :
-        // findViewById(R.id.someGuiElement);
-        return rLayout; // We must return the loaded Layout
+        return rLayout;
     }
 }
 

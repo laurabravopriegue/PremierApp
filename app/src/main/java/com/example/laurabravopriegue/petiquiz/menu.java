@@ -119,8 +119,13 @@ public class menu extends Fragment {
 
     public void seeQuestions(View view)
     {
-        Intent intent = new Intent(faActivity, seequestions.class);
-        startActivity(intent);
+        seequestions newFragment = new seequestions();
+        Bundle args = new Bundle();
+        newFragment.setArguments(args);
+        FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     public void Click(View v) {

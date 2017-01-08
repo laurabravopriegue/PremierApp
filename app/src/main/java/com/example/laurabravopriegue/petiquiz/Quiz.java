@@ -45,7 +45,7 @@ public class Quiz extends Fragment {
 
     private Question[] mQuestionBank = new Question[] {
                 new Question("waiting for questions to load", true, null)
-    };;
+    };
 
     private int mCurrentIndex = 0;
 
@@ -104,6 +104,11 @@ public class Quiz extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mCurrentIndex = arguments.getInt("question");
+        }
+
         faActivity  = super.getActivity();
         llLayout    = (LinearLayout) inflater.inflate(R.layout.activity_quiz, container, false);
 
@@ -153,7 +158,7 @@ public class Quiz extends Fragment {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
 
-        updateQuestion();
+        //updateQuestion();
 
         DownloadQuestions downloadQuestions = new DownloadQuestions();
         downloadQuestions.execute();

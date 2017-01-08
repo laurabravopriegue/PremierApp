@@ -1,5 +1,6 @@
 package com.example.laurabravopriegue.petiquiz;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -50,14 +51,23 @@ public class seequestions extends ListFragment {
         for (int i = 0; i < len; i++) {
             JSONObject question = response.getJSONObject(i);
             Boolean answer;
+            Boolean userAnswer = null;
             if (question.getInt("answer") == 0) {
                 answer = false;
             }
             else {
                 answer = true;
             }
+            if (!question.isNull("userAnswer")) {
+                if (question.getInt("userAnswer") == 0) {
+                    userAnswer = false;
+                }
+                else {
+                    userAnswer = true;
+                }
+            }
             String questionText = question.getString("question");
-            questionsBank[i] = new Question(questionText, answer, true);
+            questionsBank[i] = new Question(questionText, answer, userAnswer);
         }
         mQuestionBank = questionsBank;
         // Construct the data source
@@ -73,7 +83,16 @@ public class seequestions extends ListFragment {
         @Override
         public JSONArray doInBackground(Void... params)
         {
-            String str="http://mfcfund.ml/petiapp/GetQuestions.php";
+            SharedPreferences pref = faActivity.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            boolean loggedIn = pref.getBoolean("loggedIn", false);
+            String str;
+            if (loggedIn) {
+                int userId = pref.getInt("userId", 0);
+                str="http://mfcfund.ml/petiapp/GetQuestionsWithAnswers.php"+"?userId="+userId;
+            }
+            else {
+                str="http://mfcfund.ml/petiapp/GetQuestions.php";
+            }
             URLConnection urlConn = null;
             BufferedReader bufferedReader = null;
             try

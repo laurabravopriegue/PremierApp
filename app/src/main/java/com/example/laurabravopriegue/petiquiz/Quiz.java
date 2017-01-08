@@ -186,14 +186,23 @@ public class Quiz extends Fragment {
         for (int i = 0; i < len; i++) {
             JSONObject question = response.getJSONObject(i);
             Boolean answer;
+            Boolean userAnswer = null;
             if (question.getInt("answer") == 0) {
                 answer = false;
             }
             else {
                 answer = true;
             }
+            if (!question.isNull("userAnswer")) {
+                if (question.getInt("userAnswer") == 0) {
+                    userAnswer = false;
+                }
+                else {
+                    userAnswer = true;
+                }
+            }
             String questionText = question.getString("question");
-            questionsBank[i] = new Question(questionText, answer, null);
+            questionsBank[i] = new Question(questionText, answer, userAnswer);
         }
         mQuestionBank = questionsBank;
         updateQuestion();

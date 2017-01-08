@@ -101,6 +101,8 @@ public class menu extends Fragment {
             editor.putInt("score", 0);
 
             editor.commit();
+            // Reload questions
+            Questions.questionsLoaded = false;
 
             Button loginButton = (Button) llLayout.findViewById(R.id.login);
             loginButton.setText("LOG IN");

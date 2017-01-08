@@ -37,6 +37,8 @@ public class Quiz extends Fragment {
 
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mSkipButton;
+    private Button mCheatButton;
 
     private Button mNextButton;
     private TextView mQuestionTextView;
@@ -52,15 +54,22 @@ public class Quiz extends Fragment {
 
         mTrueButton = (Button) llLayout.findViewById(R.id.true_button);
         mFalseButton = (Button) llLayout.findViewById(R.id.false_button);
+        mSkipButton = (Button) llLayout.findViewById(R.id.skip_button);
+        mCheatButton = (Button) llLayout.findViewById(R.id.cheat_button);
+
         if (currentQuestion.mUserAnswer != null) {
             mTrueButton.setEnabled(false);
             mFalseButton.setEnabled(false);
+            mSkipButton.setEnabled(false);
+            mCheatButton.setEnabled(false);
             Toast.makeText(super.getActivity(), "You already answered with "+currentQuestion.mUserAnswer + " to this question", Toast.LENGTH_SHORT)
                     .show();
         }
         else {
             mTrueButton.setEnabled(true);
             mFalseButton.setEnabled(true);
+            mSkipButton.setEnabled(true);
+            mCheatButton.setEnabled(true);
         }
     }
 
@@ -92,10 +101,39 @@ public class Quiz extends Fragment {
         } else {
             messageResId = R.string.incorrect_toast;
         }
-        currentQuestion.mUserAnswer = userPressed;
+        if (userPressed) {
+            currentQuestion.mUserAnswer = 1;
+        }
+        else {
+            currentQuestion.mUserAnswer = 0;
+        }
+
         Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
+    }
 
+    private void skipAnswer() {
+        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
+        if (currentQuestion.mUserAnswer != null) {
+            Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+        currentQuestion.mUserAnswer = 2;
+        Toast.makeText(super.getActivity(), "Skipping question", Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    private void cheatAnswer() {
+        Question currentQuestion = Questions.mQuestionBank[mCurrentIndex];
+        if (currentQuestion.mUserAnswer != null) {
+            Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+        currentQuestion.mUserAnswer = 3;
+        Toast.makeText(super.getActivity(), currentQuestion.isAnswerTrue()+": "+currentQuestion.getExplanation(), Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -123,7 +161,6 @@ public class Quiz extends Fragment {
 
         mTrueButton = (Button) llLayout.findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 checkAnswer(true);
@@ -132,11 +169,25 @@ public class Quiz extends Fragment {
 
         mFalseButton = (Button) llLayout.findViewById(R.id.false_button);
         mFalseButton.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View v) {
                 checkAnswer(false);
+            }
+        });
+
+        mSkipButton = (Button) llLayout.findViewById(R.id.skip_button);
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                skipAnswer();
+            }
+        });
+
+        mCheatButton = (Button) llLayout.findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cheatAnswer();
             }
         });
 
@@ -153,8 +204,6 @@ public class Quiz extends Fragment {
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
-
-        //updateQuestion();
 
         if (!Questions.questionsLoaded) {
             DownloadQuestions downloadQuestions = new DownloadQuestions();
@@ -181,7 +230,7 @@ public class Quiz extends Fragment {
         for (int i = 0; i < len; i++) {
             JSONObject question = response.getJSONObject(i);
             Boolean answer;
-            Boolean userAnswer = null;
+            Integer userAnswer = null;
             if (question.getInt("answer") == 0) {
                 answer = false;
             }
@@ -189,15 +238,11 @@ public class Quiz extends Fragment {
                 answer = true;
             }
             if (!question.isNull("userAnswer")) {
-                if (question.getInt("userAnswer") == 0) {
-                    userAnswer = false;
-                }
-                else {
-                    userAnswer = true;
-                }
+                userAnswer = question.getInt("userAnswer");
             }
             String questionText = question.getString("question");
-            questionsBank[i] = new Question(questionText, answer, userAnswer);
+            String explanationText = question.getString("explanation");
+            questionsBank[i] = new Question(questionText, answer, userAnswer, explanationText);
         }
         //mQuestionBank = questionsBank;
         Questions.mQuestionBank = questionsBank;

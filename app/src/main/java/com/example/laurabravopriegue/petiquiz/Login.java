@@ -107,7 +107,8 @@ public class Login extends Fragment {
                                     editor.commit(); // commit changes
                                     // End
 
-
+                                    // reload question
+                                    Questions.questionsLoaded = false;
                                     //Login.this.startActivity(intent);
                                     UserArea newFragment = new UserArea();
                                     Bundle args = new Bundle();

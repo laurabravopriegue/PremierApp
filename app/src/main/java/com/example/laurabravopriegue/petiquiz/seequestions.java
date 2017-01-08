@@ -64,7 +64,7 @@ public class seequestions extends ListFragment {
         for (int i = 0; i < len; i++) {
             JSONObject question = response.getJSONObject(i);
             Boolean answer;
-            Boolean userAnswer = null;
+            Integer userAnswer = null;
             if (question.getInt("answer") == 0) {
                 answer = false;
             }
@@ -72,15 +72,11 @@ public class seequestions extends ListFragment {
                 answer = true;
             }
             if (!question.isNull("userAnswer")) {
-                if (question.getInt("userAnswer") == 0) {
-                    userAnswer = false;
-                }
-                else {
-                    userAnswer = true;
-                }
+                userAnswer = question.getInt("userAnswer");
             }
             String questionText = question.getString("question");
-            questionsBank[i] = new Question(questionText, answer, userAnswer);
+            String explanationText = question.getString("explanation");
+            questionsBank[i] = new Question(questionText, answer, userAnswer, explanationText);
         }
         Questions.mQuestionBank = questionsBank;
         Questions.questionsLoaded = true;

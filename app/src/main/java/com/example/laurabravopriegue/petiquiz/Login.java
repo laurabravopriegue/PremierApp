@@ -64,65 +64,74 @@ public class Login extends Fragment {
                 final String username = etUserName.getText().toString();
                 final String password = etPassword.getText().toString();
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response){
+                if (username.matches("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                    builder.setMessage("Please provide a username!");
+                    builder.setNegativeButton("OK", null);
+                    builder.create();
+                    builder.show();
+                }
+                else if (password.matches("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                    builder.setMessage("Please provide a password!");
+                    builder.setNegativeButton("OK", null);
+                    builder.create();
+                    builder.show();
+                }
+                else {
+                    Response.Listener<String> responseListener = new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
 
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-                            boolean success = jsonResponse.getBoolean("success");
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+                                boolean success = jsonResponse.getBoolean("success");
 
-                            if (success){
+                                if (success) {
 
-                                String name = jsonResponse.getString("name");
-                                int age = jsonResponse.getInt("age");
+                                    String name = jsonResponse.getString("name");
+                                    int age = jsonResponse.getInt("age");
 
-                                //Intent intent = new Intent(faActivity, UserArea.class);
-                                //intent.putExtra("name", name);
-                                //intent.putExtra("username", username);
-                                //intent.putExtra("age", age);
+                                    // Begin:
+                                    // Save logged in user to use in other activites
+                                    SharedPreferences pref = faActivity.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                                    SharedPreferences.Editor editor = pref.edit();
 
-                                // Begin:
-                                // Save logged in user to use in other activites
-                                SharedPreferences pref = faActivity.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-                                SharedPreferences.Editor editor = pref.edit();
+                                    editor.putBoolean("loggedIn", true); // Storing boolean - true/false
+                                    editor.putString("username", username); // Storing string
+                                    editor.putInt("score", 0); // Storing integer
+                                    editor.putString("name", name);
+                                    editor.putInt("age", age);
 
-                                editor.putBoolean("loggedIn", true); // Storing boolean - true/false
-                                editor.putString("username", username); // Storing string
-                                editor.putInt("score", 0); // Storing integer
-                                editor.putString("name", name);
-                                editor.putInt("age", age);
-
-                                editor.commit(); // commit changes
-                                // End
+                                    editor.commit(); // commit changes
+                                    // End
 
 
-                                //Login.this.startActivity(intent);
-                                UserArea newFragment = new UserArea();
-                                Bundle args = new Bundle();
-                                newFragment.setArguments(args);
-                                FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
-                                transaction.replace(R.id.fragment_container, newFragment);
-                                transaction.addToBackStack(null);
-                                transaction.commit();
+                                    //Login.this.startActivity(intent);
+                                    UserArea newFragment = new UserArea();
+                                    Bundle args = new Bundle();
+                                    newFragment.setArguments(args);
+                                    FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.fragment_container, newFragment);
+                                    transaction.addToBackStack(null);
+                                    transaction.commit();
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
+                                    builder.setMessage("Log In Failed");
+                                    builder.setNegativeButton("Retry", null);
+                                    builder.create();
+                                    builder.show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
-                                builder.setMessage("Log In Failed");
-                                builder.setNegativeButton("Retry", null);
-                                builder.create();
-                                builder.show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+
                         }
-
-                    }
-                };
-
-                LoginRequest loginRequest= new LoginRequest(username, password, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(faActivity);
-                queue.add(loginRequest);
+                    };
+                    LoginRequest loginRequest= new LoginRequest(username, password, responseListener);
+                    RequestQueue queue = Volley.newRequestQueue(faActivity);
+                    queue.add(loginRequest);
+                }
             }
 
         });

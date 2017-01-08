@@ -42,7 +42,7 @@ public class Quiz extends Fragment {
     private TextView userScore;
 
     private Question[] mQuestionBank = new Question[] {
-                new Question("waiting for questions to load", true)
+                new Question("waiting for questions to load", true, null)
     };;
 
     private int mCurrentIndex = 0;
@@ -52,12 +52,17 @@ public class Quiz extends Fragment {
         mQuestionTextView.setText(question);
     }
 
-    private void checkAnswer(boolean userPressedTrue) {
-        boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
-
+    private void checkAnswer(boolean userPressed) {
+        Question currentQuestion = mQuestionBank[mCurrentIndex];
+        if (currentQuestion.mUserAnswer != null) {
+            Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+        boolean answerIsTrue = currentQuestion.isAnswerTrue();
         int messageResId = 0;
 
-        if (userPressedTrue == answerIsTrue) {
+        if (userPressed == answerIsTrue) {
             messageResId = R.string.correct_toast;
 
             SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -67,7 +72,6 @@ public class Quiz extends Fragment {
                 Integer score = pref.getInt("score", 0);
                 score += 10;
                 editor.putInt("score", score); // Storing integer
-
                 editor.commit(); // commit changes
 
                 //update score on screen
@@ -76,7 +80,7 @@ public class Quiz extends Fragment {
         } else {
             messageResId = R.string.incorrect_toast;
         }
-
+        currentQuestion.mUserAnswer = userPressed;
         Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
 
@@ -172,7 +176,7 @@ public class Quiz extends Fragment {
                 answer = true;
             }
             String questionText = question.getString("question");
-            questionsBank[i] = new Question(questionText, answer);
+            questionsBank[i] = new Question(questionText, answer, null);
         }
         mQuestionBank = questionsBank;
         updateQuestion();

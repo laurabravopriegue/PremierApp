@@ -8,6 +8,7 @@ public class Question {
 
     private String mQuestion;
     private boolean mAnswerTrue;
+    public Boolean mUserAnswer;
 
     public String getTextResId() {
         return mQuestion;
@@ -25,10 +26,9 @@ public class Question {
         mAnswerTrue = answerTrue;
     }
 
-    public Question(String question, boolean answerTrue) {
+    public Question(String question, boolean answerTrue, Boolean userAnswer) {
         mQuestion = question;
         mAnswerTrue = answerTrue;
-
-
+        mUserAnswer = userAnswer;
     }
 }

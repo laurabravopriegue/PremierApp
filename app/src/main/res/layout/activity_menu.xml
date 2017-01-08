@@ -58,7 +58,7 @@
             android:textSize="20sp"
             android:fontFamily="sans-serif"
             android:textColor="#740300"
-            android:id="@+id/button3"
+            android:id="@+id/start"
             android:layout_weight="0.10"
             android:onClick="sendMessage"/>
 
@@ -69,7 +69,7 @@
             android:textSize="20sp"
             android:fontFamily="sans-serif"
             android:textColor="#740300"
-            android:id="@+id/button4"
+            android:id="@+id/login"
             android:layout_weight="0.10"
             android:onClick="loginbutton"/>
 
@@ -80,7 +80,7 @@
             android:textSize="20sp"
             android:fontFamily="sans-serif"
             android:textColor="#740300"
-            android:id="@+id/button5"
+            android:id="@+id/questions"
             android:layout_weight="0.10"
             android:onClick="holaquetal"/>
 
@@ -91,14 +91,14 @@
             android:textSize="20sp"
             android:fontFamily="sans-serif"
             android:textColor="#740300"
-            android:id="@+id/button"
+            android:id="@+id/ranking"
             android:layout_weight="0.10"/>
 
         <Button
             android:text="MULTIPLAYER"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button2"
+            android:id="@+id/multiplayer"
             android:fontFamily="sans-serif"
             android:textSize="20sp"
             android:textColor="#740300"

@@ -20,7 +20,7 @@ public class SplashPage extends Activity {
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
-                    Intent intent = new Intent(SplashPage.this,menu.class);
+                    Intent intent = new Intent(SplashPage.this,MainActivity.class);
                     startActivity(intent);
                 }
             }

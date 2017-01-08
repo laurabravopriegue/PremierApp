@@ -6,6 +6,7 @@
               android:weightSum="1"
               android:baselineAligned="false"
               android:background="#B40500"
+    android:id="@+id/linLayout_quiz"
     >
 
     <TextView

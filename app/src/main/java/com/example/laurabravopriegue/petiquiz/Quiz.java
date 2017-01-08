@@ -1,11 +1,17 @@
 package com.example.laurabravopriegue.petiquiz;
 
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +28,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class Quiz extends AppCompatActivity {
+public class Quiz extends Fragment {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -54,7 +60,7 @@ public class Quiz extends AppCompatActivity {
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast;
 
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             boolean loggedIn = pref.getBoolean("loggedIn", false);
             if (loggedIn) {
                 SharedPreferences.Editor editor = pref.edit();
@@ -71,31 +77,34 @@ public class Quiz extends AppCompatActivity {
             messageResId = R.string.incorrect_toast;
         }
 
-        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
+        Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
 
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate(Bundle) called");
-        setContentView(R.layout.activity_quiz);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FragmentActivity faActivity  = (FragmentActivity) super.getActivity();
+        // Replace LinearLayout by the type of the root element of the layout you're trying to load
+        LinearLayout llLayout    = (LinearLayout)    inflater.inflate(R.layout.activity_quiz, container, false);
+        // Of course you will want to faActivity and llLayout in the class and not this method to access them in the rest of
+        // the class, just initialize them here
 
-        mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
-        userText = (TextView) findViewById(R.id.userText);
-        userScore = (TextView) findViewById(R.id.userScore);
+        // Content of previous onCreate() here
+        mQuestionTextView = (TextView) llLayout.findViewById(R.id.question_text_view);
+        userText = (TextView) llLayout.findViewById(R.id.userText);
+        userScore = (TextView) llLayout.findViewById(R.id.userScore);
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         boolean loggedIn = pref.getBoolean("loggedIn", false);
         if (loggedIn) {
-            String userName = pref.getString("user", "");
+            String userName = pref.getString("username", "");
             Integer score = pref.getInt("score", 0);
             userText.setText(userName);
             userScore.setText(score.toString());
         }
 
-        mTrueButton = (Button) findViewById(R.id.true_button);
+        mTrueButton = (Button) llLayout.findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -104,7 +113,7 @@ public class Quiz extends AppCompatActivity {
             }
         });
 
-        mFalseButton = (Button) findViewById(R.id.false_button);
+        mFalseButton = (Button) llLayout.findViewById(R.id.false_button);
         mFalseButton.setOnClickListener(new View.OnClickListener() {
 
 
@@ -114,7 +123,7 @@ public class Quiz extends AppCompatActivity {
             }
         });
 
-        mNextButton = (Button) findViewById(R.id.next_button);
+        mNextButton = (Button) llLayout.findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,6 +141,15 @@ public class Quiz extends AppCompatActivity {
 
         DownloadQuestions downloadQuestions = new DownloadQuestions();
         downloadQuestions.execute();
+
+        // Don't use this method, it's handled by inflater.inflate() above :
+        // setContentView(R.layout.activity_layout);
+
+        // The FragmentActivity doesn't contain the layout directly so we must use our instance of     LinearLayout :
+        llLayout.findViewById(R.id.linLayout_quiz);
+        // Instead of :
+        // findViewById(R.id.someGuiElement);
+        return llLayout; // We must return the loaded Layout
     }
 
     @Override

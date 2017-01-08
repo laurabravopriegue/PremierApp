@@ -1,12 +1,19 @@
 package com.example.laurabravopriegue.petiquiz;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -16,18 +23,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class Register extends AppCompatActivity {
-
+public class Register extends Fragment {
+    FragmentActivity faActivity;
+    RelativeLayout rLayout;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        faActivity  = (FragmentActivity)    super.getActivity();
+        // Replace LinearLayout by the type of the root element of the layout you're trying to load
+        rLayout    = (RelativeLayout)    inflater.inflate(R.layout.activity_register, container, false);
+        // Of course you will want to faActivity and llLayout in the class and not this method to access them in the rest of
+        // the class, just initialize them here
 
-        final EditText etAge = (EditText) findViewById(R.id.etAge);
-        final EditText etName = (EditText) findViewById(R.id.etName);
-        final EditText etUserName = (EditText) findViewById(R.id.etUserName);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
-        final Button bRegister = (Button) findViewById(R.id.bRegister);
+        // Content of previous onCreate() here
+        final EditText etAge = (EditText) rLayout.findViewById(R.id.etAge);
+        final EditText etName = (EditText) rLayout.findViewById(R.id.etName);
+        final EditText etUserName = (EditText) rLayout.findViewById(R.id.etUserName);
+        final EditText etPassword = (EditText) rLayout.findViewById(R.id.etPassword);
+        final Button bRegister = (Button) rLayout.findViewById(R.id.bRegister);
 
         bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,10 +59,15 @@ public class Register extends AppCompatActivity {
                             boolean success = jsonResponse.getBoolean("success");
 
                             if (success) {
-                                Intent intent = new Intent(Register.this, Login.class);
-                                Register.this.startActivity(intent);
+                                Login newFragment = new Login();
+                                Bundle args = new Bundle();
+                                newFragment.setArguments(args);
+                                FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_container, newFragment);
+                                transaction.addToBackStack(null);
+                                transaction.commit();
                             }else{
-                                AlertDialog.Builder builder = new AlertDialog.Builder(Register.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
                                 builder.setMessage("Username already taken");
                                 builder.setNegativeButton("Change it", null);
                                 builder.create();
@@ -66,12 +83,20 @@ public class Register extends AppCompatActivity {
                 };
 
                 RegisterRequest registerRequest = new RegisterRequest(name, username, age, password, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(Register.this);
+                RequestQueue queue = Volley.newRequestQueue(faActivity);
                 queue.add(registerRequest);
             }
 
         });
 
+        // Don't use this method, it's handled by inflater.inflate() above :
+        // setContentView(R.layout.activity_layout);
+
+        // The FragmentActivity doesn't contain the layout directly so we must use our instance of     LinearLayout :
+        rLayout.findViewById(R.id.activity_register);
+        // Instead of :
+        // findViewById(R.id.someGuiElement);
+        return rLayout; // We must return the loaded Layout
     }
 }
 

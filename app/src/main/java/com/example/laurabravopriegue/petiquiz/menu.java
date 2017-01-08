@@ -135,6 +135,17 @@ public class menu extends Fragment {
         transaction.commit();
     }
 
+    public void seeRanking(View view)
+    {
+        RankingListViewFragment newFragment = new RankingListViewFragment();
+        Bundle args = new Bundle();
+        newFragment.setArguments(args);
+        FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     public void Click(View v) {
         switch (v.getId()) {
             case R.id.start:
@@ -147,6 +158,7 @@ public class menu extends Fragment {
                 seeQuestions(llLayout);
                 break;
             case R.id.ranking:
+                seeRanking(llLayout);
                 break;
             case R.id.multiplayer:
                 break;

@@ -96,13 +96,15 @@ public class seequestions extends ListFragment {
             SharedPreferences pref = faActivity.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             boolean loggedIn = pref.getBoolean("loggedIn", false);
             String str;
+            /* This can be used if we want to store all user answers online
             if (loggedIn) {
                 int userId = pref.getInt("userId", 0);
                 str="http://mfcfund.ml/petiapp/GetQuestionsWithAnswers.php"+"?userId="+userId;
             }
             else {
                 str="http://mfcfund.ml/petiapp/GetQuestions.php";
-            }
+            }*/
+            str="http://mfcfund.ml/petiapp/GetQuestions.php";
             URLConnection urlConn = null;
             BufferedReader bufferedReader = null;
             try

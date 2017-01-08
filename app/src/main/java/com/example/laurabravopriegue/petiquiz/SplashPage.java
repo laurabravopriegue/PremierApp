@@ -2,6 +2,7 @@ package com.example.laurabravopriegue.petiquiz;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -26,6 +27,14 @@ public class SplashPage extends Activity {
             }
         };
         timerThread.start();
+
+        //Delete old score of logged in player
+        SharedPreferences pref = this.getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("score", 0);
+        editor.commit();
+        //force reload questions
+        Questions.questionsLoaded = false;
     }
 
     @Override

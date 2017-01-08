@@ -29,6 +29,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class Quiz extends Fragment {
+    FragmentActivity faActivity;
+    LinearLayout llLayout;
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
@@ -48,8 +50,22 @@ public class Quiz extends Fragment {
     private int mCurrentIndex = 0;
 
     private void updateQuestion() {
-        String question = mQuestionBank[mCurrentIndex].getTextResId();
+        Question currentQuestion = mQuestionBank[mCurrentIndex];
+        String question = currentQuestion.getTextResId();
         mQuestionTextView.setText(question);
+
+        mTrueButton = (Button) llLayout.findViewById(R.id.true_button);
+        mFalseButton = (Button) llLayout.findViewById(R.id.false_button);
+        if (currentQuestion.mUserAnswer != null) {
+            mTrueButton.setEnabled(false);
+            mFalseButton.setEnabled(false);
+            Toast.makeText(super.getActivity(), "You already answered with "+currentQuestion.mUserAnswer + " to this question", Toast.LENGTH_SHORT)
+                    .show();
+        }
+        else {
+            mTrueButton.setEnabled(true);
+            mFalseButton.setEnabled(true);
+        }
     }
 
     private void checkAnswer(boolean userPressed) {
@@ -88,13 +104,9 @@ public class Quiz extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentActivity faActivity  = (FragmentActivity) super.getActivity();
-        // Replace LinearLayout by the type of the root element of the layout you're trying to load
-        LinearLayout llLayout    = (LinearLayout)    inflater.inflate(R.layout.activity_quiz, container, false);
-        // Of course you will want to faActivity and llLayout in the class and not this method to access them in the rest of
-        // the class, just initialize them here
+        faActivity  = super.getActivity();
+        llLayout    = (LinearLayout) inflater.inflate(R.layout.activity_quiz, container, false);
 
-        // Content of previous onCreate() here
         mQuestionTextView = (TextView) llLayout.findViewById(R.id.question_text_view);
         userText = (TextView) llLayout.findViewById(R.id.userText);
         userScore = (TextView) llLayout.findViewById(R.id.userScore);

@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class menu extends Fragment {
     LinearLayout llLayout;
@@ -35,6 +36,12 @@ public class menu extends Fragment {
 
         //add event listeners to buttons
         llLayout.findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Click(view);
+            }
+        });
+        llLayout.findViewById(R.id.restart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Click(view);
@@ -77,9 +84,6 @@ public class menu extends Fragment {
 
     public void startQuiz(View view)
     {
-        //Intent intent = new Intent(faActivity, Quiz.class);
-        //startActivity(intent);
-
         Quiz newFragment = new Quiz();
         Bundle args = new Bundle();
         newFragment.setArguments(args);
@@ -146,10 +150,32 @@ public class menu extends Fragment {
         transaction.commit();
     }
 
+    private void restart() {
+        Questions.questionsLoaded = false;
+        SharedPreferences pref = faActivity.getSharedPreferences("MyPref", 0); // 0 - for private mode
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("score", 0);
+        editor.commit();
+
+        Toast.makeText(super.getActivity(), "Quiz restarted", Toast.LENGTH_SHORT)
+                .show();
+
+        Quiz newFragment = new Quiz();
+        Bundle args = new Bundle();
+        newFragment.setArguments(args);
+        FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     public void Click(View v) {
         switch (v.getId()) {
             case R.id.start:
                 startQuiz(llLayout);
+                break;
+            case R.id.restart:
+                restart();
                 break;
             case R.id.login:
                 loginbutton(llLayout);

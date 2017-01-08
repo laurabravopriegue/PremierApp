@@ -47,6 +47,7 @@ public class Quiz extends Fragment {
     private Button mFalseButton;
     private Button mSkipButton;
     private Button mCheatButton;
+    private Button mQuestionsButton;
 
     private Button mNextButton;
     private TextView mQuestionTextView;
@@ -64,12 +65,10 @@ public class Quiz extends Fragment {
         mFalseButton = (Button) llLayout.findViewById(R.id.false_button);
         mSkipButton = (Button) llLayout.findViewById(R.id.skip_button);
         mCheatButton = (Button) llLayout.findViewById(R.id.cheat_button);
+        mQuestionsButton = (Button) llLayout.findViewById(R.id.questions_button);
 
         if (currentQuestion.mUserAnswer != null) {
-            mTrueButton.setEnabled(false);
-            mFalseButton.setEnabled(false);
-            mSkipButton.setEnabled(false);
-            mCheatButton.setEnabled(false);
+            DisableButtons();
             Toast.makeText(super.getActivity(), "You already answered with "+currentQuestion.mUserAnswer + " to this question", Toast.LENGTH_SHORT)
                     .show();
         }
@@ -115,12 +114,9 @@ public class Quiz extends Fragment {
         else {
             currentQuestion.mUserAnswer = 0;
         }
-
         Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
-        if (Questions.AllQuestionsAnswered()) {
-            RecordScore();
-        }
+        DisableButtons();
     }
 
     private void skipAnswer() {
@@ -131,11 +127,9 @@ public class Quiz extends Fragment {
             return;
         }
         currentQuestion.mUserAnswer = 2;
-        Toast.makeText(super.getActivity(), "Skipping question", Toast.LENGTH_SHORT)
+        Toast.makeText(super.getActivity(), "Skipped question", Toast.LENGTH_SHORT)
                 .show();
-        if (Questions.AllQuestionsAnswered()) {
-            RecordScore();
-        }
+        mNextButton.performClick();
     }
 
     private void cheatAnswer() {
@@ -148,10 +142,21 @@ public class Quiz extends Fragment {
         currentQuestion.mUserAnswer = 3;
         Toast.makeText(super.getActivity(), currentQuestion.isAnswerTrue()+": "+currentQuestion.getExplanation(), Toast.LENGTH_SHORT)
                 .show();
+        DisableButtons();
+    }
 
-        if (Questions.AllQuestionsAnswered()) {
-            RecordScore();
-        }
+    private void questions() {
+        seequestions newFragment = new seequestions();
+        FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.commit();
+    }
+
+    private void DisableButtons() {
+        mTrueButton.setEnabled(false);
+        mFalseButton.setEnabled(false);
+        mSkipButton.setEnabled(false);
+        mCheatButton.setEnabled(false);
     }
 
     private void RecordScore() {
@@ -238,6 +243,14 @@ public class Quiz extends Fragment {
             @Override
             public void onClick(View v) {
                 cheatAnswer();
+            }
+        });
+
+        mQuestionsButton = (Button) llLayout.findViewById(R.id.questions_button);
+        mQuestionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                questions();
             }
         });
 

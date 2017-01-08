@@ -48,7 +48,6 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
                         newFragment.setArguments(args);
                         FragmentTransaction transaction = ((FragmentActivity)context).getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.fragment_container, newFragment);
-                        transaction.addToBackStack(null);
                         transaction.commit();
                     }
                 }

@@ -63,6 +63,17 @@
             android:onClick="sendMessage"/>
 
         <Button
+            android:text="RESTART QUIZ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif"
+            android:textColor="#740300"
+            android:id="@+id/restart"
+            android:layout_weight="0.10"
+            android:onClick="restart"/>
+
+        <Button
             android:text="LOG IN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

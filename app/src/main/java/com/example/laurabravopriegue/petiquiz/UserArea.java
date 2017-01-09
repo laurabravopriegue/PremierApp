@@ -20,20 +20,11 @@ public class UserArea extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         faActivity = (FragmentActivity)    super.getActivity();
-        // Replace LinearLayout by the type of the root element of the layout you're trying to load
         rLayout = (RelativeLayout)    inflater.inflate(R.layout.activity_user_area, container, false);
-        // Of course you will want to faActivity and llLayout in the class and not this method to access them in the rest of
-        // the class, just initialize them here
 
-        // Content of previous onCreate() here
         final EditText etUserName = (EditText) rLayout.findViewById(R.id.etUserName);
         final EditText etAge = (EditText) rLayout.findViewById(R.id.etAge);
         final TextView welcomeMessage = (TextView) rLayout.findViewById(R.id.tvWelcomeMsg);
-
-        //Intent intent = getIntent();
-        //String name = intent.getStringExtra("name");
-        //String username = intent.getStringExtra("username");
-        //int age = intent.getIntExtra("age", -1);
 
         SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         String username = pref.getString("username", "");
@@ -44,7 +35,6 @@ public class UserArea extends Fragment {
         welcomeMessage.setText(message);
         etUserName.setText(username);
         etAge.setText(age + "");
-
 
         rLayout.findViewById(R.id.startGame).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,14 +49,8 @@ public class UserArea extends Fragment {
             }
         });
 
-        // Don't use this method, it's handled by inflater.inflate() above :
-        // setContentView(R.layout.activity_layout);
-
-        // The FragmentActivity doesn't contain the layout directly so we must use our instance of     LinearLayout :
         rLayout.findViewById(R.id.activity_user_area);
-        // Instead of :
-        // findViewById(R.id.someGuiElement);
-        return rLayout; // We must return the loaded Layout
+        return rLayout;
     }
 
     public void backtomenu()

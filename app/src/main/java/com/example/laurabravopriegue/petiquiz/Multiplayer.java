@@ -264,7 +264,6 @@ public class Multiplayer extends Fragment {
                 Toast.makeText(super.getActivity(), "Player 2 wins!", Toast.LENGTH_SHORT)
                         .show();
                 currentPlayerText.setText("Player 2 wins!");
-
             }
             else {
                 Toast.makeText(super.getActivity(), "It's a tie!", Toast.LENGTH_SHORT)
@@ -273,7 +272,6 @@ public class Multiplayer extends Fragment {
             }
             DisableButtons();
         }
-
     }
 
     private void DisableButtons() {

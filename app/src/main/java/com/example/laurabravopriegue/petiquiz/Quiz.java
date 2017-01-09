@@ -95,8 +95,17 @@ public class Quiz extends Fragment {
 
             SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             boolean loggedIn = pref.getBoolean("loggedIn", false);
+            SharedPreferences.Editor editor = pref.edit();
             if (loggedIn) {
-                SharedPreferences.Editor editor = pref.edit();
+                Integer score = pref.getInt("score", 0);
+                score += 10;
+                editor.putInt("score", score); // Storing integer
+                editor.commit(); // commit changes
+
+                //update score on screen
+                userScore.setText(score.toString());
+            }
+            else {
                 Integer score = pref.getInt("score", 0);
                 score += 10;
                 editor.putInt("score", score); // Storing integer
@@ -117,8 +126,18 @@ public class Quiz extends Fragment {
         Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
         DisableButtons();
+
         if (Questions.AllQuestionsAnswered()) {
-            RecordScore();
+            SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            boolean loggedIn = pref.getBoolean("loggedIn", false);
+            if (loggedIn) {
+                RecordScore();
+            }
+            else {
+                int score = pref.getInt("score", 0);
+                Toast.makeText(super.getActivity(), "You scored "+score+" points! Login to save your results.", Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
     }
 
@@ -132,8 +151,19 @@ public class Quiz extends Fragment {
         currentQuestion.mUserAnswer = 2;
         Toast.makeText(super.getActivity(), "Skipped question", Toast.LENGTH_SHORT)
                 .show();
+
         if (Questions.AllQuestionsAnswered()) {
-            RecordScore();
+            SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            boolean loggedIn = pref.getBoolean("loggedIn", false);
+            if (loggedIn) {
+                RecordScore();
+            }
+            else {
+                int score = pref.getInt("score", 0);
+                Toast.makeText(super.getActivity(), "You scored "+score+" points! Login to save your results.", Toast.LENGTH_SHORT)
+                        .show();
+            }
+            DisableButtons();
         }
         else {
             mNextButton.performClick();
@@ -153,7 +183,16 @@ public class Quiz extends Fragment {
         DisableButtons();
 
         if (Questions.AllQuestionsAnswered()) {
-            RecordScore();
+            SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            boolean loggedIn = pref.getBoolean("loggedIn", false);
+            if (loggedIn) {
+                RecordScore();
+            }
+            else {
+                int score = pref.getInt("score", 0);
+                Toast.makeText(super.getActivity(), "You scored "+score+" points! Login to save your results.", Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
     }
 
@@ -176,8 +215,10 @@ public class Quiz extends Fragment {
         int maxScore = pref.getInt("maxscore", 0);
         int score = pref.getInt("score", 0);
         int userid = pref.getInt("userId", 0);
+        Toast.makeText(super.getActivity(), "You scored "+score+" points!", Toast.LENGTH_SHORT)
+                .show();
         if (score > maxScore) {
-            Toast.makeText(super.getActivity(), "You have a new high score of "+score+" points! Sending it to the server...", Toast.LENGTH_SHORT)
+            Toast.makeText(super.getActivity(), "It's a new high score for you! Sending it to the server...", Toast.LENGTH_SHORT)
                     .show();
 
             Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -224,6 +265,10 @@ public class Quiz extends Fragment {
             Integer score = pref.getInt("score", 0);
             userText.setText(userName);
             userScore.setText(score.toString());
+        }
+        else {
+            userText.setText("Guest player");
+            userScore.setText(Integer.toString(0));
         }
 
         mTrueButton = (Button) llLayout.findViewById(R.id.true_button);

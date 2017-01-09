@@ -29,13 +29,8 @@ public class Login extends Fragment {
     RelativeLayout rLayout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        faActivity  = (FragmentActivity)    super.getActivity();
-        // Replace LinearLayout by the type of the root element of the layout you're trying to load
-        rLayout    = (RelativeLayout)    inflater.inflate(R.layout.activity_login, container, false);
-        // Of course you will want to faActivity and llLayout in the class and not this method to access them in the rest of
-        // the class, just initialize them here
-
-        // Content of previous onCreate() here
+        faActivity = (FragmentActivity)super.getActivity();
+        rLayout = (RelativeLayout)inflater.inflate(R.layout.activity_login, container, false);
         final EditText etUserName = (EditText) rLayout.findViewById(R.id.etUserName);
         final EditText etPassword = (EditText) rLayout.findViewById(R.id.etPassword);
 
@@ -45,8 +40,6 @@ public class Login extends Fragment {
         registerLink.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                //Intent registerIntent = new Intent(faActivity, Register.class);
-                //Login.this.startActivity(registerIntent);
                 Register newFragment = new Register();
                 Bundle args = new Bundle();
                 newFragment.setArguments(args);
@@ -54,7 +47,6 @@ public class Login extends Fragment {
                 transaction.replace(R.id.fragment_container, newFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
-
             }
         });
 
@@ -98,20 +90,18 @@ public class Login extends Fragment {
                                     SharedPreferences pref = faActivity.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                                     SharedPreferences.Editor editor = pref.edit();
 
-                                    editor.putBoolean("loggedIn", true); // Storing boolean - true/false
-                                    editor.putString("username", username); // Storing string
-                                    editor.putInt("score", 0); // Storing integer
+                                    editor.putBoolean("loggedIn", true);
+                                    editor.putString("username", username);
+                                    editor.putInt("score", 0);
                                     editor.putString("name", name);
                                     editor.putInt("age", age);
                                     editor.putInt("userId", userId);
                                     editor.putInt("maxscore", maxScore);
 
                                     editor.commit(); // commit changes
-                                    // End
 
-                                    // reload question
+                                    // reload questions
                                     Questions.questionsLoaded = false;
-                                    //Login.this.startActivity(intent);
                                     UserArea newFragment = new UserArea();
                                     Bundle args = new Bundle();
                                     newFragment.setArguments(args);
@@ -139,14 +129,7 @@ public class Login extends Fragment {
             }
 
         });
-
-        // Don't use this method, it's handled by inflater.inflate() above :
-        // setContentView(R.layout.activity_layout);
-
-        // The FragmentActivity doesn't contain the layout directly so we must use our instance of     LinearLayout :
         rLayout.findViewById(R.id.activity_login);
-        // Instead of :
-        // findViewById(R.id.someGuiElement);
-        return rLayout; // We must return the loaded Layout
+        return rLayout;
     }
 }

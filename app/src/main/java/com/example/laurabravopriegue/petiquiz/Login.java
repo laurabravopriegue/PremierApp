@@ -55,7 +55,7 @@ public class Login extends Fragment {
             public void onClick(View v){
                 final String username = etUserName.getText().toString();
                 final String password = etPassword.getText().toString();
-
+                // Check if user provided all the necessary information
                 if (username.matches("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(faActivity);
                     builder.setMessage("Please provide a username!");

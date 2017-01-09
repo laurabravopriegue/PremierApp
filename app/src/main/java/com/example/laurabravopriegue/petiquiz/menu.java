@@ -22,6 +22,7 @@ public class menu extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         faActivity  = super.getActivity();
         llLayout    = (LinearLayout)    inflater.inflate(R.layout.activity_menu, container, false);
+        // Check from shared preferences if user is logged in
         SharedPreferences pref = faActivity.getSharedPreferences("MyPref", 0); // 0 - for private mode
         boolean loggedIn = pref.getBoolean("loggedIn", false);
         if (loggedIn) {
@@ -71,6 +72,7 @@ public class menu extends Fragment {
         return llLayout;
     }
 
+    // Function to start quiz view fragment
     public void startQuiz(View view)
     {
         Quiz newFragment = new Quiz();
@@ -87,6 +89,8 @@ public class menu extends Fragment {
         SharedPreferences pref = faActivity.getSharedPreferences("MyPref", 0); // 0 - for private mode
         boolean loggedIn = pref.getBoolean("loggedIn", false);
         if (loggedIn) {
+            // If user was logged in when pressed the login/logout button,
+            // log him/her out by setting values back in sharedpreference
             SharedPreferences.Editor editor = pref.edit();
 
             editor.putBoolean("loggedIn", false);
@@ -99,13 +103,15 @@ public class menu extends Fragment {
             editor.putInt("maxscore", 0);
 
             editor.commit();
-            // Reload questions
+            // By setting this boolean to false, all questions will be reloaded next time user starts a quiz,
+            // so we can make sure all his/her answers are deleted
             Questions.questionsLoaded = false;
 
             Button loginButton = (Button) llLayout.findViewById(R.id.login);
             loginButton.setText("LOG IN");
         }
         else {
+            // No logged in user, so start login fragment
             Login newFragment = new Login();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
@@ -151,6 +157,7 @@ public class menu extends Fragment {
     }
 
     private void restart() {
+        // Reload questions, and set score back to zero to restart quiz
         Questions.questionsLoaded = false;
         SharedPreferences pref = faActivity.getSharedPreferences("MyPref", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
@@ -160,6 +167,7 @@ public class menu extends Fragment {
         Toast.makeText(super.getActivity(), "Quiz restarted", Toast.LENGTH_SHORT)
                 .show();
 
+        // Start quiz fragment
         Quiz newFragment = new Quiz();
         Bundle args = new Bundle();
         newFragment.setArguments(args);

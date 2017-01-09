@@ -386,7 +386,7 @@ public class Quiz extends Fragment {
             else {
                 str="http://mfcfund.ml/petiapp/GetQuestions.php";
             }*/
-            str="http://mfcfund.ml/petiapp/GetQuestions.php";
+            str=https:"//petiapp.000webhostapp.com/GetQuestions.php";
             URLConnection urlConn = null;
             BufferedReader bufferedReader = null;
             try

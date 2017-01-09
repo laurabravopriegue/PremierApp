@@ -150,6 +150,17 @@ public class menu extends Fragment {
         transaction.commit();
     }
 
+    public void multiplayer(View view)
+    {
+        Multiplayer newFragment = new Multiplayer();
+        Bundle args = new Bundle();
+        newFragment.setArguments(args);
+        FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     private void restart() {
         Questions.questionsLoaded = false;
         SharedPreferences pref = faActivity.getSharedPreferences("MyPref", 0); // 0 - for private mode
@@ -187,6 +198,7 @@ public class menu extends Fragment {
                 seeRanking(llLayout);
                 break;
             case R.id.multiplayer:
+                multiplayer(llLayout);
                 break;
         }
     }

@@ -1,0 +1,148 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:weightSum="1"
+              android:baselineAligned="false"
+              android:background="#B40500"
+    android:id="@+id/linLayout_quiz"
+    >
+    <TextView
+        android:id="@+id/numPlayerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:gravity="top"
+        android:padding="24dp"
+        android:fontFamily="sans-serif"
+        android:text="2 Player game"
+        android:textAlignment="center"
+        android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/playerTurnText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:gravity="top"
+        android:padding="24dp"
+        android:fontFamily="sans-serif"
+        android:text="Player 1 answers the question!"
+        android:textAlignment="center"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/question_text_view"
+        android:layout_width="249dp"
+        android:layout_height="wrap_content"
+        android:background="#CACACA"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:padding="24dp"
+        android:fontFamily="sans-serif"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:fontFamily="sans-serif"
+        android:baselineAligned="false">
+        <Button
+            android:id="@+id/true_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/true_button" />
+
+        <Button
+            android:id="@+id/false_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/false_button"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:fontFamily="sans-serif"
+        android:baselineAligned="false">
+        <Button
+            android:id="@+id/skip_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/skip_button"/>
+
+        <Button
+            android:id="@+id/cheat_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/cheat_button"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:fontFamily="sans-serif"
+        android:baselineAligned="false">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:gravity="top"
+        android:padding="24dp"
+        android:fontFamily="sans-serif"
+        android:text="Player 1 score:"
+        android:textAlignment="center"
+        android:layout_gravity="bottom|right" />
+    <TextView
+        android:id="@+id/player1Score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:gravity="top"
+        android:padding="24dp"
+        android:fontFamily="sans-serif"
+        android:text=""
+        android:textAlignment="center"
+        android:layout_gravity="bottom|left" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:fontFamily="sans-serif"
+        android:baselineAligned="false">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:gravity="top"
+            android:padding="24dp"
+            android:fontFamily="sans-serif"
+            android:text="Player 2 score:"
+            android:textAlignment="center"
+            android:layout_gravity="bottom|right" />
+        <TextView
+            android:id="@+id/player2Score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:gravity="top"
+            android:padding="24dp"
+            android:fontFamily="sans-serif"
+            android:text=""
+            android:textAlignment="center"
+            android:layout_gravity="bottom|left" />
+    </LinearLayout>
+</LinearLayout>

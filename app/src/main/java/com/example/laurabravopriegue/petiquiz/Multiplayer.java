@@ -1,24 +1,19 @@
 package com.example.laurabravopriegue.petiquiz;
 
-import android.icu.text.AlphabeticIndex;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import android.content.SharedPreferences;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,7 +22,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,23 +30,22 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-public class Quiz extends Fragment {
+public class Multiplayer extends Fragment {
     FragmentActivity faActivity;
     LinearLayout llLayout;
 
-    private static final String TAG = "QuizActivity";
+    private static final String TAG = "Multiplayer";
     private static final String KEY_INDEX = "index";
 
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mSkipButton;
     private Button mCheatButton;
-    private Button mQuestionsButton;
 
-    private Button mNextButton;
     private TextView mQuestionTextView;
-    private TextView userText;
-    private TextView userScore;
+    private TextView player1Score;
+    private TextView player2Score;
+    private TextView currentPlayerText;
 
     private int mCurrentIndex = 0;
 
@@ -65,10 +58,9 @@ public class Quiz extends Fragment {
         mFalseButton = (Button) llLayout.findViewById(R.id.false_button);
         mSkipButton = (Button) llLayout.findViewById(R.id.skip_button);
         mCheatButton = (Button) llLayout.findViewById(R.id.cheat_button);
-        mQuestionsButton = (Button) llLayout.findViewById(R.id.questions_button);
 
         if (currentQuestion.mUserAnswer != null) {
-            DisableButtons();
+            //DisableButtons();
             Toast.makeText(super.getActivity(), "You've already answered this question!", Toast.LENGTH_SHORT)
                     .show();
         }
@@ -94,16 +86,26 @@ public class Quiz extends Fragment {
             messageResId = R.string.correct_toast;
 
             SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-            boolean loggedIn = pref.getBoolean("loggedIn", false);
-            if (loggedIn) {
-                SharedPreferences.Editor editor = pref.edit();
-                Integer score = pref.getInt("score", 0);
-                score += 10;
-                editor.putInt("score", score); // Storing integer
-                editor.commit(); // commit changes
-
-                //update score on screen
-                userScore.setText(score.toString());
+            int currentPlayer = pref.getInt("currentPlayer", 0);
+            SharedPreferences.Editor editor = pref.edit();
+            Integer score = 0;
+            switch(currentPlayer) {
+                case 1:
+                    score = pref.getInt("player1Score", 0);
+                    score += 10;
+                    editor.putInt("player1Score", score); // Storing integer
+                    editor.commit(); // commit changes
+                    //update score on screen
+                    player1Score.setText(score.toString());
+                    break;
+                case 2:
+                    score = pref.getInt("player2Score", 0);
+                    score += 10;
+                    editor.putInt("player2Score", score); // Storing integer
+                    editor.commit(); // commit changes
+                    //update score on screen
+                    player2Score.setText(score.toString());
+                    break;
             }
         } else {
             messageResId = R.string.incorrect_toast;
@@ -116,7 +118,35 @@ public class Quiz extends Fragment {
         }
         Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
-        DisableButtons();
+        NextPlayer();
+        UpdateText();
+        NextQuestion();
+    }
+
+    private void UpdateText() {
+        SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        int currentPlayer = pref.getInt("currentPlayer", 0);
+        int player1ScoreInt = pref.getInt("player1Score", 0);
+        int player2ScoreInt = pref.getInt("player2Score", 0);
+        currentPlayerText.setText("Player " + currentPlayer + " answers the question!");
+        player1Score.setText(Integer.toString(player1ScoreInt));
+        player2Score.setText(Integer.toString(player2ScoreInt));
+    }
+
+    private void NextPlayer() {
+        SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        int currentPlayer = pref.getInt("currentPlayer", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        switch(currentPlayer) {
+            case 1:
+                editor.putInt("currentPlayer",2);
+                editor.commit(); // commit changes
+                break;
+            case 2:
+                editor.putInt("currentPlayer",1);
+                editor.commit(); // commit changes
+                break;
+        }
     }
 
     private void skipAnswer() {
@@ -129,7 +159,9 @@ public class Quiz extends Fragment {
         currentQuestion.mUserAnswer = 2;
         Toast.makeText(super.getActivity(), "Skipped question", Toast.LENGTH_SHORT)
                 .show();
-        mNextButton.performClick();
+        NextPlayer();
+        UpdateText();
+        NextQuestion();
     }
 
     private void cheatAnswer() {
@@ -142,53 +174,9 @@ public class Quiz extends Fragment {
         currentQuestion.mUserAnswer = 3;
         Toast.makeText(super.getActivity(), currentQuestion.isAnswerTrue()+": "+currentQuestion.getExplanation(), Toast.LENGTH_SHORT)
                 .show();
-        DisableButtons();
-    }
-
-    private void questions() {
-        seequestions newFragment = new seequestions();
-        FragmentTransaction transaction = faActivity.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.commit();
-    }
-
-    private void DisableButtons() {
-        mTrueButton.setEnabled(false);
-        mFalseButton.setEnabled(false);
-        mSkipButton.setEnabled(false);
-        mCheatButton.setEnabled(false);
-    }
-
-    private void RecordScore() {
-        SharedPreferences pref = faActivity.getSharedPreferences("MyPref", 0); // 0 - for private mode
-        int maxScore = pref.getInt("maxscore", 0);
-        int score = pref.getInt("score", 0);
-        int userid = pref.getInt("userId", 0);
-        if (score > maxScore) {
-            Toast.makeText(super.getActivity(), "You have a new high score of "+score+" points! Sending it to the server...", Toast.LENGTH_SHORT)
-                    .show();
-
-            Response.Listener<String> responseListener = new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        boolean success = jsonResponse.getBoolean("success");
-
-                        if (success) {
-
-                        } else {
-
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            ScoreRequest scoreRequest = new ScoreRequest(userid, score, responseListener);
-            RequestQueue queue = Volley.newRequestQueue(faActivity);
-            queue.add(scoreRequest);
-        }
+        NextPlayer();
+        UpdateText();
+        NextQuestion();
     }
 
     @Override
@@ -199,20 +187,21 @@ public class Quiz extends Fragment {
         }
 
         faActivity  = super.getActivity();
-        llLayout    = (LinearLayout) inflater.inflate(R.layout.activity_quiz, container, false);
+        llLayout    = (LinearLayout) inflater.inflate(R.layout.multiplayer, container, false);
 
         mQuestionTextView = (TextView) llLayout.findViewById(R.id.question_text_view);
-        userText = (TextView) llLayout.findViewById(R.id.userText);
-        userScore = (TextView) llLayout.findViewById(R.id.userScore);
+        player1Score = (TextView) llLayout.findViewById(R.id.player1Score);
+        player2Score = (TextView) llLayout.findViewById(R.id.player2Score);
+        currentPlayerText = (TextView) llLayout.findViewById(R.id.playerTurnText);
 
         SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-        boolean loggedIn = pref.getBoolean("loggedIn", false);
-        if (loggedIn) {
-            String userName = pref.getString("username", "");
-            Integer score = pref.getInt("score", 0);
-            userText.setText(userName);
-            userScore.setText(score.toString());
-        }
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("currentPlayer", 1);
+        editor.putInt("player1Score", 0);
+        editor.putInt("player2Score", 0);
+        editor.commit();
+        UpdateText();
+
 
         mTrueButton = (Button) llLayout.findViewById(R.id.true_button);
         mTrueButton.setOnClickListener(new View.OnClickListener() {
@@ -246,38 +235,52 @@ public class Quiz extends Fragment {
             }
         });
 
-        mQuestionsButton = (Button) llLayout.findViewById(R.id.questions_button);
-        mQuestionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                questions();
-            }
-        });
-
-        mNextButton = (Button) llLayout.findViewById(R.id.next_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + 1) % Questions.mQuestionBank.size();
-                updateQuestion();
-            }
-        });
-
-
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
 
-        if (!Questions.questionsLoaded) {
-            DownloadQuestions downloadQuestions = new DownloadQuestions();
-            downloadQuestions.execute();
-        }
-        else {
-            updateQuestion();
-        }
+        DownloadQuestions downloadQuestions = new DownloadQuestions();
+        downloadQuestions.execute();
 
         llLayout.findViewById(R.id.linLayout_quiz);
         return llLayout;
+    }
+
+    public void NextQuestion() {
+        if (!Questions.AllQuestionsAnswered()) {
+            mCurrentIndex = (mCurrentIndex + 1) % Questions.mQuestionBank.size();
+            updateQuestion();
+        }
+        else {
+            SharedPreferences pref = super.getActivity().getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            int player1 = pref.getInt("player1Score", 0);
+            int player2 = pref.getInt("player2Score", 0);
+            if (player1 > player2) {
+                Toast.makeText(super.getActivity(), "Player 1 wins!", Toast.LENGTH_SHORT)
+                        .show();
+                currentPlayerText.setText("Player 1 wins!");
+            }
+            else if (player2 > player1) {
+                Toast.makeText(super.getActivity(), "Player 2 wins!", Toast.LENGTH_SHORT)
+                        .show();
+                currentPlayerText.setText("Player 2 wins!");
+
+            }
+            else {
+                Toast.makeText(super.getActivity(), "It's a tie!", Toast.LENGTH_SHORT)
+                        .show();
+                currentPlayerText.setText("It's a tie!");
+            }
+            DisableButtons();
+        }
+
+    }
+
+    private void DisableButtons() {
+        mTrueButton.setEnabled(false);
+        mFalseButton.setEnabled(false);
+        mSkipButton.setEnabled(false);
+        mCheatButton.setEnabled(false);
     }
 
     @Override
@@ -309,7 +312,7 @@ public class Quiz extends Fragment {
         }
         //mQuestionBank = questionsBank;
         Questions.mQuestionBank = questionsBank;
-        Questions.questionsLoaded = true;
+        Questions.questionsLoaded = false;
         updateQuestion();
     }
 

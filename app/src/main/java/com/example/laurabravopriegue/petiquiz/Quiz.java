@@ -117,6 +117,9 @@ public class Quiz extends Fragment {
         Toast.makeText(super.getActivity(), messageResId, Toast.LENGTH_SHORT)
                 .show();
         DisableButtons();
+        if (Questions.AllQuestionsAnswered()) {
+            RecordScore();
+        }
     }
 
     private void skipAnswer() {
@@ -129,7 +132,12 @@ public class Quiz extends Fragment {
         currentQuestion.mUserAnswer = 2;
         Toast.makeText(super.getActivity(), "Skipped question", Toast.LENGTH_SHORT)
                 .show();
-        mNextButton.performClick();
+        if (Questions.AllQuestionsAnswered()) {
+            RecordScore();
+        }
+        else {
+            mNextButton.performClick();
+        }
     }
 
     private void cheatAnswer() {
@@ -143,6 +151,10 @@ public class Quiz extends Fragment {
         Toast.makeText(super.getActivity(), currentQuestion.isAnswerTrue()+": "+currentQuestion.getExplanation(), Toast.LENGTH_SHORT)
                 .show();
         DisableButtons();
+
+        if (Questions.AllQuestionsAnswered()) {
+            RecordScore();
+        }
     }
 
     private void questions() {
